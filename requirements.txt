@@ -1,0 +1,6 @@
+pandas
+scikit-learn
+imbalanced-learn
+scikit-optimize
+openpyxl
+numpy
