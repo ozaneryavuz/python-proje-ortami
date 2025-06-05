@@ -66,7 +66,8 @@ def tune_xgb(X: np.ndarray, y: np.ndarray) -> XGBClassifier:
 def train_pipeline(df: pd.DataFrame):
     """Train a stacking model and preprocessing pipeline."""
     X = df.drop("Cikti 2", axis=1)
-    y = df["Cikti 2"].astype(str).map({"1": 0, "X": 1, "2": 2}).astype(int)
+    # Positive=home win, 0=draw, negative=away win
+    y = df["Cikti 2"].apply(np.sign).map({1: 0, 0: 1, -1: 2})
 
     pipeline = Pipeline([
         ("imputer", SimpleImputer(strategy='mean')),
@@ -114,7 +115,8 @@ def main() -> None:
     df = load_data("Girdi ve Ciktilar.xlsx")
     df = feature_engineering(df)
     X = df.drop("Cikti 2", axis=1)
-    y = df["Cikti 2"].astype(str).map({"1": 0, "X": 1, "2": 2}).astype(int)
+    # Positive=home win, 0=draw, negative=away win
+    y = df["Cikti 2"].apply(np.sign).map({1: 0, 0: 1, -1: 2})
     odds = df[["Girdi 1", "Girdi 2", "Girdi 3"]].values
 
     X_train, X_test, y_train, y_test, odds_train, odds_test = train_test_split(
