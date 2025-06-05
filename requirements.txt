@@ -6,4 +6,6 @@ xgboost
 lightgbm
 scikit-optimize
 optuna
+imbalanced-learn
+
 openpyxl
