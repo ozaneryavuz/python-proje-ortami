@@ -91,10 +91,12 @@ def main():
 
     save_results(result_df_rf, 'rf_tahmin_sonuclari.xlsx')
 
+
     # ------------------------
     # Prediction on new data
     # ------------------------
-    new_data_file = 'YeniGirdiX.xlsx'
+    # Load new data for predictions
+    new_data_file = 'YeniGirdi.xlsx'
     new_data = load_and_validate_data(new_data_file)
     new_data = new_data.drop(columns=["Cikti 1", "Cikti 2"], errors='ignore')
     new_data = feature_engineering(new_data)
@@ -110,16 +112,9 @@ def main():
     if new_data_scaled.shape[1] != X_train_selected.shape[1]:
         raise ValueError(f"Expected input shape ({X_train_selected.shape[1]}) but got ({new_data_scaled.shape[1]})")
 
-    # Example placeholder for additional models
-    new_data_scaled_reshaped = {
-        'rf': new_data_scaled,
-    }
-    new_data_predictions = {model_name: models[model_name].predict(new_data_scaled_reshaped[model_name]) for model_name in models}
-
-    new_data_decisions = {
-        model_name: apply_thresholds_and_make_decisions(new_data_predictions[model_name].flatten(), thresholds[model_name])
-        for model_name in models
-    }
+    # Predict and make betting decisions for the new data
+    new_data_predictions = rf_best.predict(new_data_scaled)
+    new_data_decisions = apply_thresholds_and_make_decisions(new_data_predictions.flatten(), best_thresholds_rf)
 
     save_predictions_and_decisions(new_data, new_data_predictions, new_data_decisions, 'YeniGirdi_Tahmin_Karar_Sonuclari.xlsx')
 
@@ -127,19 +122,14 @@ def main():
     existing_data = pd.read_excel(existing_data_file)
 
     inputs = existing_data[['Girdi 1', 'Girdi 2', 'Girdi 3']].values
-    outputs = existing_data[[f'Tahmin_{model}' for model in models]].values
+    outputs = existing_data[['Tahmin_rf']].values
 
     efficiency_scores = diversified_dea_analysis(inputs, outputs)
 
     best_decisions = []
     for i, row in existing_data.iterrows():
-        best_decision = None
-        max_efficiency = -1
-        for model in models:
-            efficiency = efficiency_scores[i]
-            if efficiency is not None and efficiency > max_efficiency:
-                max_efficiency = efficiency
-                best_decision = row[f'Karar_{model}']
+        efficiency = efficiency_scores[i]
+        best_decision = row['Karar_rf'] if efficiency is not None else None
         best_decisions.append(best_decision)
 
     existing_data['En Iyi Karar'] = best_decisions
