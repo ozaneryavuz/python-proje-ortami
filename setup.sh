@@ -1,3 +1,3 @@
 #!/bin/bash
-# Install required Python packages for the project
+# Install project dependencies
 pip install -r requirements.txt
