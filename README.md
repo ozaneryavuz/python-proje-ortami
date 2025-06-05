@@ -18,6 +18,14 @@ Uygulamayı çalıştırmak için:
 python src/main.py
 ```
 
+### ROI Modeli
+
+"Girdi ve Ciktilar.xlsx" dosyasını aynı dizine koyduktan sonra karlılık odaklı modeli çalıştırmak için:
+
+```bash
+python src/roi_model.py
+```
+
 ## Testler
 
 Testleri çalıştırmak için:
