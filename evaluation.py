@@ -1,5 +1,6 @@
 import pickle
 import pandas as pd
+import numpy as np
 from skopt import gp_minimize
 from skopt.space import Real
 
@@ -142,4 +143,30 @@ def apply_thresholds_and_make_decisions(predictions, thresholds):
         decision = determine_result(pred, thresholds[0], thresholds[1])
         decisions.append(decision)
     return decisions
+
+
+def diversified_dea_analysis(inputs, outputs):
+    """Return basic DEA efficiency scores using equal weights.
+
+    Parameters
+    ----------
+    inputs : array-like
+        Matrix of input values for each decision unit.
+    outputs : array-like
+        Matrix of output values for each decision unit.
+
+    Returns
+    -------
+    numpy.ndarray
+        Efficiency score for each decision unit computed as the
+        ratio of summed outputs to summed inputs. If the sum of
+        inputs is zero, a very small number is used to avoid
+        division by zero.
+    """
+    inputs = np.asarray(inputs, dtype=float)
+    outputs = np.asarray(outputs, dtype=float)
+    input_totals = inputs.sum(axis=1)
+    input_totals[input_totals == 0] = np.finfo(float).eps
+    efficiency = outputs.sum(axis=1) / input_totals
+    return efficiency
 
