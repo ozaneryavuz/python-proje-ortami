@@ -1,4 +1,11 @@
+requests
+numpy
 pandas
 scikit-learn
+xgboost
+lightgbm
+scikit-optimize
+optuna
 imbalanced-learn
+
 openpyxl
